@@ -1,8 +1,14 @@
 import React from 'react'
+import TicketCard from './(components)/TicketCard'
 
 const Dashboard = () => {
   return (
-    <div>Dashboard</div>
+    <div>
+      <TicketCard />
+      <TicketCard />
+      <TicketCard />
+
+    </div>
   )
 }
 
