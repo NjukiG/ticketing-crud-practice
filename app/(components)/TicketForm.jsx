@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const TicketForm = ({ticket}) => {
+const TicketForm = ({ ticket }) => {
   const EDITMODE = ticket._id === "new" ? false : true;
   const router = useRouter();
   const handleChange = (e) => {
@@ -19,14 +19,26 @@ const TicketForm = ({ticket}) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch("/api/Tickets", {
-      method: "POST",
-      body: JSON.stringify({ formData }),
-      "content-type": "application/json",
-    });
+    if (EDITMODE) {
+      const res = await fetch(`/api/Tickets/${ticket._id}`, {
+        method: "PUT",
+        body: JSON.stringify({ formData }),
+        "content-type": "application/json",
+      });
 
-    if (!res.ok) {
-      throw new Error("Failed to create ticket!");
+      if (!res.ok) {
+        throw new Error("Failed to Update ticket!");
+      }
+    } else {
+      const res = await fetch("/api/Tickets", {
+        method: "POST",
+        body: JSON.stringify({ formData }),
+        "content-type": "application/json",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to create ticket!");
+      }
     }
 
     router.refresh();
@@ -60,7 +72,7 @@ const TicketForm = ({ticket}) => {
         method="post"
         onSubmit={handleSubmit}
       >
-        <h3>Create your ticket!</h3>
+        <h3>{EDITMODE ? "Update your ticket!" : "Create your ticket!"}</h3>
         <label>Title</label>
         <input
           id="title"
@@ -163,7 +175,11 @@ const TicketForm = ({ticket}) => {
           <option value="done">Done</option>
         </select>
 
-        <input type="submit" className="button btn" value="Create a Ticket" />
+        <input
+          type="submit"
+          className="button btn"
+          value={EDITMODE ? "Update your ticket!" : "Create your ticket!"}
+        />
       </form>
     </div>
   );
